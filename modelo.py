@@ -179,10 +179,8 @@ class MiniSentimentBERT(nn.Module):
             for _ in range(num_layers)
         ])
 
-        # Normalización final (buena práctica con pre-norm)
         self.final_norm = nn.LayerNorm(hidden_dim)
 
-        # Clasificador de dos capas sobre el token [CLS]
         self.classifier = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim // 2),
             nn.GELU(),
@@ -190,7 +188,6 @@ class MiniSentimentBERT(nn.Module):
             nn.Linear(hidden_dim // 2, num_classes),
         )
 
-        # Inicialización de pesos estilo BERT
         self._init_weights()
 
     def _init_weights(self):
@@ -217,7 +214,6 @@ class MiniSentimentBERT(nn.Module):
         x = self.token_emb(input_ids) + self.pos_emb(pos)          # (B, T, C)
         x = self.emb_drop(self.emb_norm(x))
 
-        # Pasar por los bloques transformer
         for block in self.blocks:
             x = block(x, attention_mask)
 
@@ -275,14 +271,12 @@ class IMDBModel(L.LightningModule):
     def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
         return self.model(input_ids, attention_mask)
 
-    # ── Paso compartido ──────────────────────
     def _shared_step(self, batch: dict) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         logits = self(batch["input_ids"], batch["attention_mask"])
         loss   = self.loss_fn(logits, batch["label"])
         preds  = logits.argmax(dim=-1)
         return loss, preds, batch["label"]
 
-    # ── Pasos de train / val / test ──────────
     def training_step(self, batch: dict, batch_idx: int) -> torch.Tensor:
         loss, preds, labels = self._shared_step(batch)
         self.train_acc(preds, labels)
@@ -341,6 +335,6 @@ class IMDBModel(L.LightningModule):
             "optimizer": optimizer,
             "lr_scheduler": {
                 "scheduler": scheduler,
-                "interval":  "step",   # actualizar cada step, no cada época
+                "interval":  "step",   
             },
         }

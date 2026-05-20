@@ -11,3 +11,5 @@ wheels/
 uv.lock
 mi_tokenizer/
 corpus.txt
+weights/
+lightning_logs/

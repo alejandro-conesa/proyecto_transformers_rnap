@@ -56,7 +56,6 @@ class IMDBDataset(Dataset):
         ids = encoded.ids[:self.max_len]
         mask = [1] * len(ids)
 
-        # Padding
         pad_len = self.max_len - len(ids)
         ids  += [0] * pad_len
         mask += [0] * pad_len

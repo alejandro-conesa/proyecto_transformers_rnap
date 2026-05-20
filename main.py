@@ -10,12 +10,12 @@ NAME   = "mini_bert"
 dm    = IMDBDataModule(batch_size=64, max_len=256)
 model = IMDBModel(vocab_size=10_000, num_layers=4, hidden_dim=256)
 
-early_stopping = EarlyStopping(monitor="val_loss", patience=3, mode="min")
+early_stopping = EarlyStopping(monitor="val/loss", patience=3, mode="min")
 ckpt = ModelCheckpoint(
     dirpath="weights",
     filename=f"{EPOCHS}ep-{NAME}",
     verbose=True,
-    monitor="val_character_error_rate", 
+    monitor="val/loss", 
     mode="min"
 )
 summary = ModelSummary(max_depth=3)
